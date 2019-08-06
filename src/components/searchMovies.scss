@@ -1,0 +1,9 @@
+.empty {margin: 3em 0 0 33%; font-size: 1.5em;
+    > span {animation: 0.5s slidein 0s 1; color: red;}
+}
+      
+@keyframes slidein {0% {margin-left:-100px;} 100% {margin-left: 0px;}}
+
+@media (max-width: 691px) {
+    .empty {margin-left: 0; text-align: center; line-height: 1.9em;}
+}
