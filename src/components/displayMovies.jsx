@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import StarsRate from "./starsRate";
@@ -6,6 +6,11 @@ import './displayMovies.scss';
 
 function DisplayMovies(props) {
     const pathImg = 'http://image.tmdb.org/t/p/w185';
+    let [getbuttonUp, setButtonUp] = useState(false);
+
+    window.addEventListener("scroll", function (event) {
+        setButtonUp(this.scrollY > 100 ? true : false);
+    });
 
     function scrollUp() {
         window.scrollTo({top: 0, behavior: 'smooth'});
@@ -23,9 +28,11 @@ function DisplayMovies(props) {
                     </Link>
                 )
             })}
-            <button className="btnFixed" onClick={scrollUp}>
-                <img src="/img/up.png" alt="arriba" />
-            </button>
+            {getbuttonUp &&
+                <button className="btnFixed" onClick={scrollUp}>
+                    <img src="/img/up.png" alt="arriba" />
+                </button>
+            }
         </section>
     )
 }
