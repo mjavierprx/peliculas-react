@@ -1,38 +1,35 @@
 import React, { useState } from 'react';
-import {NavLink} from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 
 import './header.scss';
 
 function Header() {
     const [getInputQuery, setInputQuery] = useState("");
-    const inputChange = event => {
+    function inputChange (event) {
         setInputQuery(event.target.value);
     }
 
     const [getWindowSize, setWindowSize] = useState(window.innerWidth);
-    const windowSizeChange = () => {
+    function windowSizeChange() {
         setWindowSize(window.innerWidth);
     }
     window.addEventListener('resize', windowSizeChange);
 
-    const keyPressed = event => {
+    function keyPressed(event) {
         if (event.key === "Enter") {
             search();
         }
     }
-    const search = () => {
-        console.log("funciona", getInputQuery, getWindowSize);
 
-        // this.router.navigate(['movies/search/' + query]);
-        // this.inputQuery = '';
-
+    function search(e) {
+        document.getElementById('toSearchMovies').click();
     }
     const [getDropdownShow, setDropdownShow] = useState(false);
-    const dropdownShow = event => {
+    function dropdownShow(event) {
         setDropdownShow(!getDropdownShow);
         event.stopPropagation();
     }
-    const elementClicked = () => {
+    function elementClicked() {
         setDropdownShow(false);
     }
     window.addEventListener('click', elementClicked);
@@ -42,12 +39,11 @@ function Header() {
     return (
         <header>
             <div className="logo">
-                <NavLink to='movies/top_rated' activeClassName='active'>
-                    <img src="img/logo.png" alt="logo"/>
+                <NavLink to='/movies/top_rated' activeClassName='active'>
+                    <img src="/img/logo.png" alt="logo"/>
                 </NavLink>
             </div>
-            {
-                cwithBig691 &&
+            {cwithBig691 &&
                 <nav className="normal">
                     <NavLink to='/movies/top_rated' activeClassName='active'>Más valoradas</NavLink>
                     <NavLink to='/movies/popular' activeClassName='active'>Popular</NavLink>
@@ -59,12 +55,10 @@ function Header() {
                 <input type="text" value={getInputQuery} placeholder="Buscar" className="search" onChange={inputChange} onKeyPress={keyPressed}/>
                 <img src="img/search.png" className="btnSearch" alt="Buscar" onClick={search}/>
             </div>
-            {
-                !cwithBig691 &&
+            {!cwithBig691 &&
                 <nav className="button">
                     <img src={getDropdownShow ? 'img/bmenuc.png' : 'img/bmenu.png'} alt="Menu" onClick={dropdownShow}/>
-                    {
-                        getDropdownShow &&
+                    {getDropdownShow &&
                         <div className="dropdown">
                             <NavLink to='/movies/top_rated' activeClassName='active'>Más valoradas</NavLink>
                             <NavLink to='/movies/popular' activeClassName='active'>Popular</NavLink>
@@ -74,6 +68,7 @@ function Header() {
                     }
                 </nav>
             }
+            <Link id="toSearchMovies" to={`/movies/search/${getInputQuery}`}></Link>
         </header>
     )
 }
