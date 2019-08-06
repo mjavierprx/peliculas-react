@@ -1,0 +1,17 @@
+.movies-genre {
+    > h1 {display: none;}
+    > .genres {display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); grid-gap: 1em; margin-bottom: 1em; background-color: #444; padding: 1em 0; margin: 1em 1em 0 1em;}
+    > .spacebottom {height: 100vh;}
+}
+$col-secondary: #edc405;
+.genre {text-align: center; 
+    > a {text-decoration: none; display: inline-block; font-size: 1.8em; font-weight: bold;
+        &.noSelected {transform: perspective(2.5em) rotateX(15deg) scaleY(0.8); transition: all 0.5s; color: lighten($col-secondary, 30%);}
+        &:hover, &.selected {transform: perspective(8em) rotateX(11deg) scale(1.12);}
+        &.selected {color: lighten($col-secondary, 10%); border-left: 1px solid lighten($col-secondary, 10%); border-right: 1px solid lighten($col-secondary, 10%); padding: 0 0.3em;}
+    }
+}
+    
+@media (max-width: 691px) {
+    .movies-genre > .genres {margin: 0.2em 0.2em 0 0.2em;}
+}
