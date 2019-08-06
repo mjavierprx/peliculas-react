@@ -1,5 +1,5 @@
 header {
-    padding: 1em; background: #222; display: flex; justify-content: space-between; align-items: center; font-size: 1.2em; flex-wrap: wrap;
+    padding: 1em; display: flex; justify-content: space-between; align-items: center; font-size: 1.2em; flex-wrap: wrap; background: url("/img/backheader.jpg") #222 repeat;
     > .logo {
         a > img {height: 3em;}
     }
@@ -26,6 +26,7 @@ header {
         }
         > .btnSearch {height: 70%; right: 6px; top: 16%; position: absolute; cursor: pointer;}
     }
+    > #toSearchMovies {display: none;}
 }
 
 @media (max-width: 900px) {
