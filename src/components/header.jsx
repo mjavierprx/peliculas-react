@@ -39,36 +39,36 @@ function Header() {
     return (
         <header>
             <div className="logo">
-                <NavLink to='/movies/top_rated' activeClassName='active'>
+                <NavLink to='/peliculas/mas_valoradas' activeClassName='active'>
                     <img src="/img/logo.png" alt="logo"/>
                 </NavLink>
             </div>
             {cwithBig691 &&
                 <nav className="normal">
-                    <NavLink to='/movies/top_rated' activeClassName='active'>Más valoradas</NavLink>
-                    <NavLink to='/movies/popular' activeClassName='active'>Popular</NavLink>
-                    <NavLink to='/movies/upcoming' activeClassName='active'>Estrenos</NavLink>
-                    <NavLink to='/movies/genre/0' activeClassName='active'>Géneros</NavLink>
+                    <NavLink to='/peliculas/mas_valoradas' activeClassName='active'>Más valoradas</NavLink>
+                    <NavLink to='/peliculas/popular' activeClassName='active'>Popular</NavLink>
+                    <NavLink to='/peliculas/estrenos' activeClassName='active'>Estrenos</NavLink>
+                    <NavLink to='/peliculas/generos/0' activeClassName='active'>Géneros</NavLink>
                 </nav>
             }
             <div className="searchCont">
                 <input type="text" value={getInputQuery} placeholder="Buscar" className="search" onChange={inputChange} onKeyPress={keyPressed}/>
-                <img src="img/search.png" className="btnSearch" alt="Buscar" onClick={search}/>
+                <img src="/img/search.png" className="btnSearch" alt="Buscar" onClick={search}/>
             </div>
             {!cwithBig691 &&
                 <nav className="button">
                     <img src={getDropdownShow ? 'img/bmenuc.png' : 'img/bmenu.png'} alt="Menu" onClick={dropdownShow}/>
                     {getDropdownShow &&
                         <div className="dropdown">
-                            <NavLink to='/movies/top_rated' activeClassName='active'>Más valoradas</NavLink>
-                            <NavLink to='/movies/popular' activeClassName='active'>Popular</NavLink>
-                            <NavLink to='/movies/upcoming' activeClassName='active'>Estrenos</NavLink>
-                            <NavLink to='/movies/genre/0' activeClassName='active'>Géneros</NavLink>
+                            <NavLink to='/peliculas/mas_valoradas' activeClassName='active'>Más valoradas</NavLink>
+                            <NavLink to='/peliculas/popular' activeClassName='active'>Popular</NavLink>
+                            <NavLink to='/peliculas/estrenos' activeClassName='active'>Estrenos</NavLink>
+                            <NavLink to='/peliculas/generos/0' activeClassName='active'>Géneros</NavLink>
                         </div>
                     }
                 </nav>
             }
-            <Link id="toSearchMovies" to={`/movies/search/${getInputQuery}`}></Link>
+            <Link id="toSearchMovies" to={`/peliculas/buscar/${getInputQuery}`}></Link>
         </header>
     )
 }

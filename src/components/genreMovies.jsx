@@ -3,45 +3,47 @@ import { Link } from 'react-router-dom';
 
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-import DisplayMovies from "./displayMovies";
 import apiConnect from './services/apiConnect';
+import DisplayMovies from "./displayMovies";
 import './genreMovies.scss';
 
 function GenreMovies(props) {
-    let genreId = props.match.params.id;
-    let [getGenres, setGenres] = useState([]);
-    let [getMovies, setMovies] = useState([]);
-    let [getPage, setPage] = useState(0);
-    let [getHasMore, setHasMore] = useState(true);
+    const genreId = props.match.params.id;
+    const [getGenres, setGenres] = useState([]);
+    const [getFilms, setFilms] = useState([]);
+    let [getPage, setPage] = useState(1);
+    const [getHasMore, setHasMore] = useState(true);
     
     useEffect(() => {
-        if (genreId === '0') {
-            async function fetchDataList() {
-                setGenres(await apiConnect.getGenresList());
-            }
-            fetchDataList();
-            setMovies([]);
-        } else if (getPage === 0) {
-            async function fetchDataMovies() {
+        async function fetchDataList() {
+            setGenres(await apiConnect.getGenresList());
+        }
+        fetchDataList();
+        setFilms([]);
+    }, []);
+
+    useEffect(() => {
+        if(genreId !== '0') {
+            async function fetchDataFilms() {
                 let response = await apiConnect.getGenreMovies(genreId);
-                setMovies(response.data);
-                setHasMore(getPage < response.total_pages ? true : false);
+                setFilms(response.data);
+                setHasMore(1 < response.total_pages ? true : false);
                 document.getElementById('movies').scrollIntoView({ behavior: 'smooth' });
             }
-            fetchDataMovies();
+            fetchDataFilms();
         }
-    }, [genreId, getPage]);
+    }, [genreId]);
 
-        async function nextPage() {
-            setPage(++getPage);
-            let response = await apiConnect.getGenreMovies(genreId);
-            setMovies([...getMovies, ...response.data]);
-            setHasMore(getPage < response.total_pages ? true : false);
-        }
+    async function nextPage() {
+        setPage(++getPage);
+        let response = await apiConnect.getGenreMovies(genreId);
+        setFilms([...getFilms, ...response.data]);
+        setHasMore(getPage < response.total_pages ? true : false);
+    }
 
-        function pageCero() {
-            setPage(0);
-        }
+    function pageUno() {
+        setPage(1);
+    }
 
     return (
         <div className="movies-genre">
@@ -50,7 +52,7 @@ function GenreMovies(props) {
                 {getGenres.map((g, i) => {
                     return (
                         <span className="genre" key={i}>
-                            <Link to={`/movies/genre/${g.id}`} className={g.id === genreId ? 'selected' : 'noSelected'} onClick={pageCero}>
+                            <Link to={`/peliculas/generos/${g.id}`} className={g.id === genreId ? 'selected' : 'noSelected'} onClick={pageUno}>
                                 {g.name}
                             </Link>
                         </span>
@@ -58,9 +60,9 @@ function GenreMovies(props) {
                 })}
             </div>
             <div id="movies"></div>
-            {getMovies.length > 0 &&
+            {getFilms && getFilms.length > 0 &&
                 <InfiniteScroll
-                    dataLength={getMovies.length} 
+                    dataLength={getFilms.length} 
                     next={nextPage}
                     hasMore={getHasMore}
                     loader={<h4>Cargando...</h4>}
@@ -69,12 +71,9 @@ function GenreMovies(props) {
                     }
                 >
                     <div>
-                        <DisplayMovies films={getMovies} />
+                        <DisplayMovies films={getFilms} />
                     </div>
                 </InfiniteScroll>
-            }
-            {!getMovies.length && 
-                <div className="spacebottom"></div>
             }
         </div>
     )

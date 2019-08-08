@@ -1,7 +1,6 @@
 .movies-genre {
     > h1 {display: none;}
     > .genres {display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); grid-gap: 1em; margin-bottom: 1em; background-color: #444; padding: 1em 0; margin: 1em 1em 0 1em;}
-    > .spacebottom {height: 100vh;}
 }
 $col-secondary: #edc405;
 .genre {text-align: center; 

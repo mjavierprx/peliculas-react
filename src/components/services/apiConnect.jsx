@@ -14,16 +14,7 @@ const apiConnect = {
     getCategory: async function(cat, page = 1) {
         const validCategories = ['top_rated', 'upcoming', 'popular'];
         if (!validCategories.includes(cat)) {
-
-
-
-            console.log("kkkkkk");
-
-
-            cat = 'top_rated';
-            this.context.router.history.push('/someRoute');
-
-
+            window.location.href = "/peliculas/mas_valoradas"; 
         }
         try {
             let response = await fetch(`${baseUrlApi}/movie/${cat}?api_key=${apiKey}&page=${page}&language=es-ES`);
