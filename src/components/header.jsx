@@ -8,6 +8,14 @@ function Header() {
     function inputChange (event) {
         setInputQuery(event.target.value);
     }
+    function keyPressed(event) {
+        if (event.key === "Enter") {
+            search();
+        }
+    }
+    function search(e) {
+        document.getElementById('toSearchMovies').click();
+    }
 
     const [getWindowSize, setWindowSize] = useState(window.innerWidth);
     function windowSizeChange() {
@@ -15,15 +23,6 @@ function Header() {
     }
     window.addEventListener('resize', windowSizeChange);
 
-    function keyPressed(event) {
-        if (event.key === "Enter") {
-            search();
-        }
-    }
-
-    function search(e) {
-        document.getElementById('toSearchMovies').click();
-    }
     const [getDropdownShow, setDropdownShow] = useState(false);
     function dropdownShow(event) {
         setDropdownShow(!getDropdownShow);
@@ -57,7 +56,7 @@ function Header() {
             </div>
             {!cwithBig691 &&
                 <nav className="button">
-                    <img src={getDropdownShow ? 'img/bmenuc.png' : 'img/bmenu.png'} alt="Menu" onClick={dropdownShow}/>
+                    <img src={getDropdownShow ? '/img/bmenuc.png' : '/img/bmenu.png'} alt="Menu" onClick={dropdownShow}/>
                     {getDropdownShow &&
                         <div className="dropdown">
                             <NavLink to='/peliculas/mas_valoradas' activeClassName='active'>Más valoradas</NavLink>
