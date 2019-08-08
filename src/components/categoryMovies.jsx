@@ -7,13 +7,13 @@ import apiConnect from './services/apiConnect';
 import './categoryMovies.scss';
 
 function CategoryMovies(props) {
-    let category = props.match.params.category;    
+    const objCategory = {mas_valoradas: 'top_rated', popular: 'popular', estrenos: 'upcoming'};
+    const objTitle = {mas_valoradas: 'Más valoradas', popular: 'Popular', estrenos: 'Estrenos'};
+    let category = objCategory[props.match.params.category];
+    let title = objTitle[category];
     let [getMovies, setMovies] = useState([]);
     let [getPage, setPage] = useState(1);
     let [getHasMore, setHasMore] = useState(true);
-
-    const objCategory = {top_rated: 'Más valoradas', popular: 'Popular', upcoming: 'Estrenos'};
-    let categoryTitle = objCategory[category];
     
     useEffect(() => {
         async function fetchData() {
@@ -35,7 +35,7 @@ function CategoryMovies(props) {
         <div className="movies-category">
             {getMovies.length > 0 &&
                 <InfiniteScroll
-                    dataLength={getMovies.length} 
+                    dataLength={0} 
                     next={nextPage}
                     hasMore={getHasMore}
                     loader={<h4>Cargando...</h4>}
@@ -44,7 +44,7 @@ function CategoryMovies(props) {
                     }
                 >
                     <div>
-                        <h1>{categoryTitle}</h1>
+                        <h1>{title}</h1>
                         <DisplayMovies films={getMovies} />
                     </div>
                 </InfiniteScroll>
