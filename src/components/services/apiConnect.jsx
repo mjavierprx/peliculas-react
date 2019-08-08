@@ -11,7 +11,7 @@ const apiConnect = {
             console.log('Ha habido un problema:', error.message);
         }
     },
-    getCategory: async function(cat, page = 1) {
+    getCategoryMovies: async function(cat, page = 1) {
         const validCategories = ['top_rated', 'upcoming', 'popular'];
         if (!validCategories.includes(cat)) {
             window.location.href = "/peliculas/mas_valoradas"; 
