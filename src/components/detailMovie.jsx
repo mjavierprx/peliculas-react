@@ -10,6 +10,7 @@ import FormatDate from "./subcomponents/formatDate";
 import ItemsComma from "./subcomponents/detailItemsComma";
 import ItemsCommaLink from "./subcomponents/detailItemsCommaLink";
 import ItemsCommaLinkAct from "./subcomponents/detailItemsCommaLinkAct";
+import NoResultsFound from "./subcomponents/noResultsFound";
 import './detailMovie.scss';
 
 class DetailMovie extends React.Component{
@@ -23,7 +24,6 @@ class DetailMovie extends React.Component{
             similars: [],
             windowSize: window.innerWidth
         }
-        this.movie = [];
         this.directors = [];
         this.writing = [];
         this.music = [];
@@ -57,27 +57,31 @@ class DetailMovie extends React.Component{
         this.setState({ loading: true });
         let filmId = this.props.match.params.id;
         let response = await apiConnect.getDetailMovie(filmId);
-        for (let elem of response.credits.crew) {
-            if (elem.job === 'Director') {
-                this.directors = [...this.directors, { name: elem.name, id: elem.id }];
+        if (response) {
+            for (let elem of response.credits.crew) {
+                if (elem.job === 'Director') {
+                    this.directors = [...this.directors, { name: elem.name, id: elem.id }];
+                }
+                if (elem.job === 'Writer' || elem.job === 'Novel') {
+                    this.writing = [...this.writing, { name: elem.name }];
+                }
+                if (elem.job === 'Original Music Composer') {
+                    this.music = [...this.music, { name: elem.name }];
+                }
             }
-            if (elem.job === 'Writer' || elem.job === 'Novel') {
-                this.writing = [...this.writing, { name: elem.name }];
-            }
-            if (elem.job === 'Original Music Composer') {
-                this.music = [...this.music, { name: elem.name }];
-            }
+            this.setState({
+                movie: response,
+                loading: false
+            });
+            response = await apiConnect.getSimilarMovies(filmId);
+            this.setState({ 
+                similars: response.data 
+            });
+            this.hasMore = 1 < response.total_pages ? true : false;
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        } else {
+            this.setState({ movie: null });
         }
-        this.setState({
-            movie: response,
-            loading: false
-        });
-        response = await apiConnect.getSimilarMovies(filmId);
-        this.setState({ 
-            similars: response.data 
-        });
-        this.hasMore = 1 < response.total_pages ? true : false;
-        window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
     resizeBackdrop(big) {
@@ -117,7 +121,7 @@ class DetailMovie extends React.Component{
     render() {
         return (
             <div>
-                {!this.state.loading &&
+                {this.state.movie !== null && !this.state.loading &&
                     <div>
                         <div className={`movie ${this.state.bigBackdrop || this.state.bigPoster ? 'hideDetail' : 'showDetail'}`}>
                             <div>
@@ -255,6 +259,9 @@ class DetailMovie extends React.Component{
                             </InfiniteScroll>
                         </div>
                     </div>
+                }
+                {this.state.movie === null &&
+                    <NoResultsFound></NoResultsFound>
                 }
             </div>
         )
