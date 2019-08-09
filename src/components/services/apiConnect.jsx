@@ -28,8 +28,8 @@ const apiConnect = {
     getDetailMovie: async function(id) {
         try {
             let response = await fetch(`${baseUrlApi}/movie/${id}?api_key=${apiKey}&append_to_response=credits,videos&language=es-ES`);
-            let data = response.status_code ? null : await response.json();
-            return data;
+            let data = await response.json();
+            return data.status_code ? null : data;
         }
         catch (error) {
             console.log('Ha habido un problema:', error.message);
@@ -69,7 +69,7 @@ const apiConnect = {
         try {
             let response = await fetch(`${baseUrlApi}/person/${id}?api_key=${apiKey}&language=es-ES`);
             let data = await response.json();
-            return data;
+            return data.errors ? null : data;
         }
         catch (error) {
             console.log('Ha habido un problema:', error.message);
