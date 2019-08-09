@@ -5,10 +5,11 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 
 import apiConnect from './services/apiConnect';
 import DisplayMovies from "./displayMovies";
-import StarsRate from "./starsRate";
-import FormatDate from "./formatDate";
-import ItemsComma from "./detailItemsComma";
-import ItemsCommaLink from "./detailItemsCommaLink";
+import StarsRate from "./subcomponents/starsRate";
+import FormatDate from "./subcomponents/formatDate";
+import ItemsComma from "./subcomponents/detailItemsComma";
+import ItemsCommaLink from "./subcomponents/detailItemsCommaLink";
+import ItemsCommaLinkAct from "./subcomponents/detailItemsCommaLinkAct";
 import './detailMovie.scss';
 
 class DetailMovie extends React.Component{
@@ -26,6 +27,7 @@ class DetailMovie extends React.Component{
         this.directors = [];
         this.writing = [];
         this.music = [];
+        this.cast = [];
         this.page = 1;
         this.hasMore = true;
         this.pathImgSmall = 'http://image.tmdb.org/t/p/w300';
@@ -55,8 +57,7 @@ class DetailMovie extends React.Component{
         this.setState({ loading: true });
         let filmId = this.props.match.params.id;
         let response = await apiConnect.getDetailMovie(filmId);
-        let crew = response.credits.crew;
-        for (let elem of crew) {
+        for (let elem of response.credits.crew) {
             if (elem.job === 'Director') {
                 this.directors = [...this.directors, { name: elem.name, id: elem.id }];
             }
@@ -66,7 +67,7 @@ class DetailMovie extends React.Component{
             if (elem.job === 'Original Music Composer') {
                 this.music = [...this.music, { name: elem.name }];
             }
-        }; 
+        }
         this.setState({
             movie: response,
             loading: false
@@ -178,7 +179,7 @@ class DetailMovie extends React.Component{
                                     <div>
                                         <div className="col1">Reparto:</div>
                                         <div className="col2">
-                                            <ItemsCommaLink list={this.state.movie.credits.cast} path={'/peliculas/reparto/'}></ItemsCommaLink>
+                                            <ItemsCommaLinkAct list={this.state.movie.credits.cast} path={'/peliculas/'}></ItemsCommaLinkAct>
                                         </div>
                                     </div>
                                 }
