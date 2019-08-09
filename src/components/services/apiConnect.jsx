@@ -28,7 +28,7 @@ const apiConnect = {
     getDetailMovie: async function(id) {
         try {
             let response = await fetch(`${baseUrlApi}/movie/${id}?api_key=${apiKey}&append_to_response=credits,videos&language=es-ES`);
-            let data = await response.json();
+            let data = response.status_code ? null : await response.json();
             return data;
         }
         catch (error) {
@@ -58,6 +58,36 @@ const apiConnect = {
     getSimilarMovies: async function(id, page = 1) {
         try {
             let response = await fetch(`${baseUrlApi}/movie/${id}/similar?api_key=${apiKey}&page=${page}&language=es-ES`);
+            let data = await response.json();
+            return {data: data.results, total_pages: data.total_pages};
+        }
+        catch (error) {
+            console.log('Ha habido un problema:', error.message);
+        }
+    },
+    getDetailPerson: async function(id) {
+        try {
+            let response = await fetch(`${baseUrlApi}/person/${id}?api_key=${apiKey}&language=es-ES`);
+            let data = await response.json();
+            return data;
+        }
+        catch (error) {
+            console.log('Ha habido un problema:', error.message);
+        }
+    },
+    getDirectorMovies: async function(id, page = 1) {
+        try {
+            let response = await fetch(`${baseUrlApi}/discover/movie?api_key=${apiKey}&with_crew=${id}&page=${page}&language=es-ES`);
+            let data = await response.json();
+            return {data: data.results, total_pages: data.total_pages};
+        }
+        catch (error) {
+            console.log('Ha habido un problema:', error.message);
+        }
+    },
+    getActMovies: async function(id, page = 1) {
+        try {
+            let response = await fetch(`${baseUrlApi}/discover/movie?api_key=${apiKey}&with_cast=${id}&page=${page}&language=es-ES`);
             let data = await response.json();
             return {data: data.results, total_pages: data.total_pages};
         }

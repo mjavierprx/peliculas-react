@@ -4,6 +4,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 
 import apiConnect from "./services/apiConnect";
 import DisplayMovies from "./displayMovies";
+import NoResultsFound from "./subcomponents/noResultsFound";
 import './searchMovies.scss';
 
 function SearchMovies(props) {
@@ -49,9 +50,7 @@ function SearchMovies(props) {
                 </InfiniteScroll>
             }
             {!getMovies.length && !getLoading &&
-                <div className="empty">
-                    <span>No se han</span><span> encontrado</span><span> resultados.</span>
-                </div>
+				<NoResultsFound></NoResultsFound>
             }
         </div>
     )
