@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 import InfiniteScroll from 'react-infinite-scroll-component';
 
@@ -10,10 +9,11 @@ import FormatDate from "./subcomponents/formatDate";
 import ItemsComma from "./subcomponents/detailItemsComma";
 import ItemsCommaLink from "./subcomponents/detailItemsCommaLink";
 import ItemsCommaLinkAct from "./subcomponents/detailItemsCommaLinkAct";
+import ItemsLinkVideo from "./subcomponents/detailItemsLinkVideo";
 import NoResultsFound from "./subcomponents/noResultsFound";
 import './detailMovie.scss';
 
-class DetailMovie extends React.Component{
+class DetailMovie extends React.Component {
     constructor(props){
         super(props);
         this.state = {
@@ -203,15 +203,7 @@ class DetailMovie extends React.Component{
                                     <div>
                                         <div className="col1">Vídeos:</div>
                                         <div className="col2">
-                                            {this.state.movie.videos.results.map((v, i) => {
-                                            return (
-                                                <div key={i}>
-                                                    <Link to={`https://www.youtube.com/watch?v={v.key}`} target="_blank" rel="noopener noreferrer">
-                                                        {v.site} - {v.name}
-                                                    </Link>
-                                                </div>
-                                            )
-                                            })}
+                                            <ItemsLinkVideo list={this.state.movie.videos.results}></ItemsLinkVideo>
                                         </div>
                                     </div>
                                 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function ItemsCommaLink(props) {
+function ItemsCommaLinkAct(props) {
     let list = props.list;
     return (
         <span>
@@ -21,4 +21,4 @@ function ItemsCommaLink(props) {
     )
 }
 
-export default ItemsCommaLink;
+export default ItemsCommaLinkAct;
