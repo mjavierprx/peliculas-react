@@ -39,7 +39,7 @@ class CategoryMovies extends React.Component{
     }
 
     async nextPage() {
-        let response = await apiConnect.getCategory(this.category, ++this.page);
+        let response = await apiConnect.getCategoryMovies(this.objCategory[this.category], ++this.page);
         this.setState({ movies: [...this.state.movies, ...response.data] });
         this.hasMore = this.page < response.total_pages ? true : false;
     }

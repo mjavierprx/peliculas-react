@@ -39,7 +39,7 @@ function SearchMovies(props) {
                     next={nextPage}
                     hasMore={getHasMore}
                     loader={<h4>Cargando...</h4>}
-                    endMessage={
+                    endMessage={getMovies.length > 0 &&
                         <p style={{textAlign: 'center'}}><b>Ya no hay más películas</b></p>
                     }
                 >
