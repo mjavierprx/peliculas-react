@@ -80,31 +80,27 @@ class DetailMovie extends React.Component {
     }
 
     resizeBackdrop(big) {
-        if (this.state.movie) {
-            if (this.cwithBig691) {
-                this.setState({ bigBackdrop: big });
-            }
-            if (this.cwithBig820) {
-                if (big) {
-                    document.getElementById('bigImg').scrollIntoView({ behavior: 'smooth' });
-                } else {
-                    window.scrollTo(0, 0);
-                }
+        if (this.cwithBig691) {
+            this.setState({ bigBackdrop: big });
+        }
+        if (this.cwithBig820) {
+            if (big) {
+                document.getElementById('bigImg').scrollIntoView({ behavior: 'smooth' });
+            } else {
+                window.scrollTo(0, 0);
             }
         }
     }
     
     resizePoster(big) {
-        if (this.state.movie) {
-            if (this.cwithBig691) {
-                this.setState({ bigPoster: big });
-            }
-            if (this.cwithBig820) {
-                if (big) {
-                    document.getElementById('bigImg').scrollIntoView({ behavior: 'smooth' });
-                } else {
-                    window.scrollTo(0, 0);
-                }
+        if (this.cwithBig691) {
+            this.setState({ bigPoster: big });
+        }
+        if (this.cwithBig820) {
+            if (big) {
+                document.getElementById('bigImg').scrollIntoView({ behavior: 'smooth' });
+            } else {
+                window.scrollTo(0, 0);
             }
         }
     }
