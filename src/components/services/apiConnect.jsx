@@ -9,6 +9,7 @@ const apiConnect = {
         }
         catch (error) {
             console.log('Ha habido un problema:', error.message);
+            return null;
         }
     },
     getCategoryMovies: async function(cat, page = 1) {
@@ -23,6 +24,7 @@ const apiConnect = {
         }
         catch (error) {
             console.log('Ha habido un problema:', error.message);
+            return null;
         }
     },
     getDetailMovie: async function(id) {
@@ -33,6 +35,7 @@ const apiConnect = {
         }
         catch (error) {
             console.log('Ha habido un problema:', error.message);
+            return null;
         }
     },
     getGenresList: async function() {
@@ -43,6 +46,7 @@ const apiConnect = {
         }
         catch (error) {
             console.log('Ha habido un problema:', error.message);
+            return null;
         }
     },
     getGenreMovies: async function(id, page = 1) {
@@ -53,6 +57,7 @@ const apiConnect = {
         }
         catch (error) {
             console.log('Ha habido un problema:', error.message);
+            return null;
         }
     },
     getSimilarMovies: async function(id, page = 1) {
@@ -63,6 +68,7 @@ const apiConnect = {
         }
         catch (error) {
             console.log('Ha habido un problema:', error.message);
+            return null;
         }
     },
     getDetailPerson: async function(id) {
@@ -73,6 +79,7 @@ const apiConnect = {
         }
         catch (error) {
             console.log('Ha habido un problema:', error.message);
+            return null;
         }
     },
     getDirectorMovies: async function(id, page = 1) {
@@ -83,6 +90,7 @@ const apiConnect = {
         }
         catch (error) {
             console.log('Ha habido un problema:', error.message);
+            return null;
         }
     },
     getActMovies: async function(id, page = 1) {
@@ -93,6 +101,7 @@ const apiConnect = {
         }
         catch (error) {
             console.log('Ha habido un problema:', error.message);
+            return null;
         }
     }
 };
