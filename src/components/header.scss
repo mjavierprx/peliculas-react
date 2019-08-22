@@ -19,12 +19,12 @@ header {
             }
         }
     }    
-    > .searchCont {height: 2em; position: relative; min-width: 250px;
-        > .search {border: none; width: 100%; padding: 3px 0 3px 8px; height: 2em; background-color: #ddd; position: absolute; font-size: 1em;
+    > .searchCont {height: 2.2em; position: relative; min-width: 250px; overflow: hidden;
+        > .search {border: none; width: 100%; padding: 3px 0 3px 8px; height: 2.2em; background-color: #ddd; position: absolute; font-size: 1em;
             &::placeholder {font-size: 0.9em; color: rgb(144, 142, 142);}
             &:focus {background-color: rgb(236, 234, 234);}
         }
-        > .btnSearch {height: 70%; right: 6px; top: 16%; position: absolute; cursor: pointer;}
+        > .btnSearch {height: 70%; right: 6px; top: 7px; position: absolute; cursor: pointer;}
     }
     > #toSearchMovies {display: none;}
 }

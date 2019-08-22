@@ -2,10 +2,10 @@ import React from 'react';
 
 import './noResultsFound.scss';
 
-function NoResultsFound() {
+function NoResultsFound(props) {
     return (
         <div className="empty">
-            <span>No se han</span><span> encontrado</span><span> resultados.</span>
+            <span>{props.text1}</span><span> {props.text2}</span><span> {props.text3}.</span>
         </div>
     )
 }
