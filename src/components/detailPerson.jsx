@@ -13,11 +13,12 @@ class DetailPerson extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            person: null,
-            bigImg: false,
+            person: [],
             movies: [],
+            bigImg: false,
             windowSize: window.innerWidth
         }
+        this.loading = true;
         this.page = 1;
         this.hasMore = true;
         this.pathImgSmall = 'http://image.tmdb.org/t/p/w300';
@@ -37,6 +38,7 @@ class DetailPerson extends React.Component{
 
     componentDidUpdate(prevProps) {
         if (prevProps && prevProps.match.params.id !== this.props.match.params.id) {
+            this.loading = true;
             this.getPerson();
         }
     }
@@ -46,20 +48,21 @@ class DetailPerson extends React.Component{
     }
 
     async getPerson() {
-        this.setState({ person: null });
         this.personType = this.props.match.params.person;
         if (this.arrPerson.indexOf(this.personType) > -1) {
             let personId = this.props.match.params.id
-            let response = await apiConnect.getDetailPerson(personId);
-            if (response) {
-                this.setState({ person: response });
+            let responseP = await apiConnect.getDetailPerson(personId);
+            if (responseP) {
+                this.loading = false;
+                this.setState({ person: responseP });
+                let responseM;
                 if (this.personType === 'director') {
-                    response = await apiConnect.getDirectorMovies(personId);
+                    responseM = await apiConnect.getDirectorMovies(personId);
                 } else {
-                    response = await apiConnect.getActMovies(personId);
+                    responseM = await apiConnect.getActMovies(personId);
                 }
-                this.setState({ movies: response.data });
-                this.hasMore = 1 < response.total_pages ? true : false;
+                this.hasMore = 1 < responseM.total_pages ? true : false;
+                this.setState({ movies: responseM.data });
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
                 this.setState({ person: undefined });
@@ -89,18 +92,24 @@ class DetailPerson extends React.Component{
     }
     
     async nextPage() {
+        this.loading = true;
         let response;
         if (this.personType === 'director') {
             response = await apiConnect.getDirectorMovies(this.props.match.params.id, ++this.page);
         } else {
             response = await apiConnect.getActMovies(this.props.match.params.id, ++this.page);
         }
-        this.setState({ movies: [...this.state.movies, ...response.data] });
-        this.hasMore = this.page < response.total_pages ? true : false;
+        if (response) {
+            this.hasMore = this.page < response.total_pages ? true : false;
+            this.loading = true;
+            this.setState({ movies: [...this.state.movies, ...response.data] });
+        } else {
+            this.setState({ movie: undefined });
+        }
     }
 
     render() {
-        if (this.state.person) {
+        if (!this.loading) {
             return (
                 <div>
                     <div className="person">
@@ -162,7 +171,7 @@ class DetailPerson extends React.Component{
                 </div>
             )
         } else if (this.state.person === undefined) {
-            return <NoResultsFound></NoResultsFound>
+            return <NoResultsFound text1={'Parece que el'} text2={'servidor de TMDB'} text3={'está caído'}></NoResultsFound>
         } else {
             return <Loading></Loading>
         }

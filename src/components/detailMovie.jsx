@@ -18,22 +18,23 @@ class DetailMovie extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            movie: null,
+            movie: [],
+            similars: [],
             bigBackdrop: false,
             bigPoster: false,
-            similars: [],
             windowSize: window.innerWidth
         }
         this.directors = [];
         this.writing = [];
         this.music = [];
         this.cast = [];
-        this.page = 1;
-        this.hasMore = true;
         this.pathImgSmall = 'http://image.tmdb.org/t/p/w300';
         this.pathImgBig = 'http://image.tmdb.org/t/p/w1280';
         this.cwithBig691 = this.state.windowSize > 691 ? true : false;
         this.cwithBig820 = this.state.windowSize > 820 ? true : false;
+        this.loading = true;
+        this.page = 1;
+        this.hasMore = true;
         this.windowSizeChange = this.windowSizeChange.bind(this);
         this.nextPage = this.nextPage.bind(this);
     }
@@ -45,6 +46,7 @@ class DetailMovie extends React.Component {
 
     componentDidUpdate(prevProps) {
         if (prevProps && prevProps.match.params.id !== this.props.match.params.id) {
+            this.loading = true;
             this.getMovie();
         }
     }
@@ -54,11 +56,10 @@ class DetailMovie extends React.Component {
     }
 
     async getMovie() {
-        this.setState({ movie: null });
         let filmId = this.props.match.params.id;
-        let response = await apiConnect.getDetailMovie(filmId);
-        if (response) {
-            for (let elem of response.credits.crew) {
+        let responseM = await apiConnect.getDetailMovie(filmId);
+        if (responseM) {
+            for (let elem of responseM.credits.crew) {
                 if (elem.job === 'Director') {
                     this.directors = [...this.directors, { name: elem.name, id: elem.id }];
                 }
@@ -69,10 +70,11 @@ class DetailMovie extends React.Component {
                     this.music = [...this.music, { name: elem.name }];
                 }
             }
-            this.setState({ movie: response });
-            response = await apiConnect.getSimilarMovies(filmId);
-            this.setState({ similars: response.data });
-            this.hasMore = 1 < response.total_pages ? true : false;
+            this.loading = false;
+            this.setState({ movie: responseM });
+            let responseS = await apiConnect.getSimilarMovies(filmId);
+            this.hasMore = 1 < responseS.total_pages ? true : false;
+            this.setState({ similars: responseS.data });
             window.scrollTo({top: 0, behavior: 'smooth'});
         } else {
             this.setState({ movie: undefined });
@@ -112,13 +114,19 @@ class DetailMovie extends React.Component {
     }
     
     async nextPage() {
+        this.loading = true;
         let response = await apiConnect.getSimilarMovies(this.props.match.params.id, ++this.page);
-        this.setState({ similars: [...this.state.similars, ...response.data] });
-        this.hasMore = this.page < response.total_pages ? true : false;
+        if (response) {
+            this.loading = false;
+            this.hasMore = this.page < response.total_pages ? true : false;
+            this.setState({ similars: [...this.state.similars, ...response.data] });
+        } else {
+            this.setState({ movie: undefined });
+        }
     }
 
     render() {
-        if (this.state.movie) {
+        if (!this.loading) {
             return (
                 <div>
                     <div className="movie">
@@ -253,7 +261,7 @@ class DetailMovie extends React.Component {
                 </div>
             )
         } else if (this.state.movie === undefined) {
-            return <NoResultsFound></NoResultsFound>
+            return <NoResultsFound text1={'Parece que el'} text2={'servidor de TMDB'} text3={'está caído'}></NoResultsFound>
         } else {
             return <Loading></Loading>
         }
