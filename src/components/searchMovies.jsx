@@ -1,59 +1,96 @@
-import React, { useState, useEffect } from 'react';
+import React, { Component } from 'react';
 
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import apiConnect from "./services/apiConnect";
 import DisplayMovies from "./displayMovies";
 import NoResultsFound from "./subcomponents/noResultsFound";
-import './searchMovies.scss';
+import Loading from "./subcomponents/loading";
 
-function SearchMovies(props) {
-    let query = props.match.params.query;
-    let [getMovies, setMovies] = useState([]);
-    let [getPage, setPage] = useState(1);
-    let [getHasMore, setHasMore] = useState(true);
-    let [getLoading, setLoading] = useState(true);
-
-    useEffect(() => {
-        async function fetchData() {
-            setLoading(true);
-            let response = await apiConnect.searchMovies(query);
-            setMovies(response.data);
-            setHasMore(1 < response.total_pages ? true : false);
-            setLoading(false);
+class SearchMovies extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            movies: []
         }
-        fetchData();
-    }, [query]);
-
-    async function nextPage() {
-        setPage(++getPage);
-        let response = await apiConnect.searchMovies(query, getPage);
-        setMovies([...getMovies, ...response.data]);
-        setHasMore(getPage < response.total_pages ? true : false);
+        this.query = this.props.match.params.query;
+        this.loading = true;
+        this.page = 1;
+        this.hasMore = true;
+        this.noResults = false;
+        this.nextPage = this.nextPage.bind(this);
     }
 
-    return (
-        <div>
-             {getMovies.length > 0 &&
+    componentDidMount() {
+        this.fetchData();
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps) {
+            if (prevProps.match.params.query !== this.props.match.params.query) {
+                this.loading = true;
+                this.query = this.props.match.params.query;
+                this.noResults = false;
+                this.fetchData();
+            }
+        }
+    }
+
+    async fetchData() {
+        let response = await apiConnect.searchMovies(this.query);
+        if (response) {
+            if (response.data.length) {
+                this.hasMore = 1 < response.total_pages ? true : false;
+                this.loading = false;
+                this.setState({ movies: response.data });
+            } else {
+                this.noResults = true;
+                this.setState({ movies: undefined });
+            }
+        } else {
+            this.setState({ movies: undefined });
+        }
+    }
+
+    async nextPage() {
+        this.loading = true;
+        let response = await apiConnect.searchMovies(this.query, ++this.page);
+        if (response) {
+            this.hasMore = 1 < response.total_pages ? true : false;
+            this.loading = false;
+            this.setState({ movies: [...this.state.movies, ...response.data] });
+        } else {
+            this.setState({ movies: undefined });
+        }
+    }
+
+    render() {
+        if (!this.loading) {
+            return (
                 <InfiniteScroll
-                    dataLength={getMovies.length} 
-                    next={nextPage}
-                    hasMore={getHasMore}
+                    dataLength={this.state.movies.length}
+                    next={this.nextPage}
+                    hasMore={this.hasMore}
                     loader={<h4>Cargando...</h4>}
-                    endMessage={getMovies.length > 0 &&
-                        <p style={{textAlign: 'center'}}><b>Ya no hay más películas</b></p>
+                    endMessage={this.state.movies.length > 0 &&
+                        <p style={{ textAlign: 'center' }}><b>Ya no hay más películas</b></p>
                     }
                 >
                     <div>
-                        <DisplayMovies films={getMovies} />
+                        <DisplayMovies films={this.state.movies} />
                     </div>
                 </InfiniteScroll>
+            )
+        } else if (this.state.movies === undefined) {
+            if (this.noResults) {
+                return <NoResultsFound text1={'No se han'} text2={'encontrado'} text3={'resultados'}></NoResultsFound>
+            } else {
+                return <NoResultsFound text1={'Parece que el'} text2={'servidor de TMDB'} text3={'está caído'}></NoResultsFound>
             }
-            {!getMovies.length && !getLoading &&
-				<NoResultsFound></NoResultsFound>
-            }
-        </div>
-    )
+        } else {
+            return <Loading></Loading>
+        }
+    }
 }
 
 export default SearchMovies;
