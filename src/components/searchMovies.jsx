@@ -11,10 +11,10 @@ class SearchMovies extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            movies: []
+            movies: [],
+            loading: true
         }
         this.query = this.props.match.params.query;
-        this.loading = true;
         this.page = 1;
         this.hasMore = true;
         this.noResults = false;
@@ -28,7 +28,7 @@ class SearchMovies extends Component {
     componentDidUpdate(prevProps) {
         if (prevProps) {
             if (prevProps.match.params.query !== this.props.match.params.query) {
-                this.loading = true;
+                this.setState({ loading: true });
                 this.query = this.props.match.params.query;
                 this.noResults = false;
                 this.fetchData();
@@ -41,7 +41,7 @@ class SearchMovies extends Component {
         if (response) {
             if (response.data.length) {
                 this.hasMore = 1 < response.total_pages ? true : false;
-                this.loading = false;
+                this.setState({ loading: false });
                 this.setState({ movies: response.data });
             } else {
                 this.noResults = true;
@@ -53,11 +53,11 @@ class SearchMovies extends Component {
     }
 
     async nextPage() {
-        this.loading = true;
+        this.setState({ loading: true });
         let response = await apiConnect.searchMovies(this.query, ++this.page);
         if (response) {
             this.hasMore = 1 < response.total_pages ? true : false;
-            this.loading = false;
+            this.setState({ loading: false });
             this.setState({ movies: [...this.state.movies, ...response.data] });
         } else {
             this.setState({ movies: undefined });
@@ -65,30 +65,30 @@ class SearchMovies extends Component {
     }
 
     render() {
-        if (!this.loading) {
+        if (this.state.movies !== undefined) {
             return (
-                <InfiniteScroll
-                    dataLength={this.state.movies.length}
-                    next={this.nextPage}
-                    hasMore={this.hasMore}
-                    loader={<h4>Cargando...</h4>}
-                    endMessage={this.state.movies.length > 0 &&
-                        <p style={{ textAlign: 'center' }}><b>Ya no hay más películas</b></p>
-                    }
-                >
-                    <div>
-                        <DisplayMovies films={this.state.movies} />
-                    </div>
-                </InfiniteScroll>
+                <div>
+                    <InfiniteScroll
+                        dataLength={this.state.movies.length}
+                        next={this.nextPage}
+                        hasMore={this.hasMore}
+                        loader={this.state.loading && <Loading></Loading>}
+                        endMessage={this.state.movies.length > 0 &&
+                            <p style={{ textAlign: 'center' }}><b>Ya no hay más películas</b></p>
+                        }
+                    >
+                        <div>
+                            <DisplayMovies films={this.state.movies} />
+                        </div>
+                    </InfiniteScroll>
+                </div>
             )
-        } else if (this.state.movies === undefined) {
+        } else {
             if (this.noResults) {
                 return <NoResultsFound text1={'No se han'} text2={'encontrado'} text3={'resultados'}></NoResultsFound>
             } else {
                 return <NoResultsFound text1={'Parece que el'} text2={'servidor de TMDB'} text3={'está caído'}></NoResultsFound>
             }
-        } else {
-            return <Loading></Loading>
         }
     }
 }

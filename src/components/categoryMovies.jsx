@@ -8,17 +8,17 @@ import NoResultsFound from "./subcomponents/noResultsFound";
 import Loading from "./subcomponents/loading";
 import './categoryMovies.scss';
 
-class CategoryMovies extends React.Component{
-    constructor(props){
+class CategoryMovies extends React.Component {
+    constructor(props) {
         super(props);
         this.state = {
-            movies: []
+            movies: [],
+            loading: true
         }
-        this.objCategory = {mas_valoradas: 'top_rated', popular: 'popular', estrenos: 'upcoming'};
-        this.objTitle = {mas_valoradas: 'Más valoradas', popular: 'Popular', estrenos: 'Estrenos'};
+        this.objCategory = { mas_valoradas: 'top_rated', popular: 'popular', estrenos: 'upcoming' };
+        this.objTitle = { mas_valoradas: 'Más valoradas', popular: 'Popular', estrenos: 'Estrenos' };
         this.category = '';
         this.title = '';
-        this.loading = true;
         this.page = 1;
         this.hasMore = true;
         this.nextPage = this.nextPage.bind(this);
@@ -27,10 +27,10 @@ class CategoryMovies extends React.Component{
     async componentDidMount() {
         this.getMovies();
     }
-    
+
     componentDidUpdate(prevProps) {
         if (prevProps && prevProps.match.params.category !== this.props.match.params.category) {
-            this.loading = true;
+            this.setState({ loading: true });
             this.getMovies();
         }
     }
@@ -40,7 +40,7 @@ class CategoryMovies extends React.Component{
         let response = await apiConnect.getCategoryMovies(this.objCategory[this.category]);
         this.title = this.objTitle[this.category];
         if (response) {
-            this.loading = false;
+            this.setState({ loading: false });
             this.setState({ movies: response.data });
         } else {
             this.setState({ movies: undefined });
@@ -48,11 +48,11 @@ class CategoryMovies extends React.Component{
     }
 
     async nextPage() {
-        this.loading = true;
+        this.setState({ loading: true });
         let response = await apiConnect.getCategoryMovies(this.objCategory[this.category], ++this.page);
         if (response) {
             this.hasMore = this.page < response.total_pages ? true : false;
-            this.loading = false;
+            this.setState({ loading: false });
             this.setState({ movies: [...this.state.movies, ...response.data] });
         } else {
             this.setState({ movies: undefined });
@@ -60,16 +60,16 @@ class CategoryMovies extends React.Component{
     }
 
     render() {
-        if (!this.loading) {
+        if (this.state.movies !== undefined) {
             return (
                 <div className="movies-category">
                     <InfiniteScroll
-                        dataLength={this.state.movies.length} 
+                        dataLength={this.state.movies.length}
                         next={this.nextPage}
                         hasMore={this.hasMore}
-                        loader={<h4>Cargando...</h4>}
+                        loader={this.state.loading && <Loading></Loading>}
                         endMessage={
-                            <p style={{textAlign: 'center'}}><b>Ya no hay más películas</b></p>
+                            <p style={{ textAlign: 'center' }}><b>Ya no hay más películas</b></p>
                         }
                     >
                         <div>
@@ -79,10 +79,8 @@ class CategoryMovies extends React.Component{
                     </InfiniteScroll>
                 </div>
             )
-        } else if (this.state.movies === undefined) {
-            return <NoResultsFound text1={'Parece que el'} text2={'servidor de TMDB'} text3={'está caído'}></NoResultsFound>
         } else {
-            return <Loading></Loading>
+            return <NoResultsFound text1={'Parece que el'} text2={'servidor de TMDB'} text3={'está caído'}></NoResultsFound>
         }
     }
 }

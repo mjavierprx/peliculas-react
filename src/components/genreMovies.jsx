@@ -14,9 +14,9 @@ class GenreMovies extends React.Component {
         super(props);
         this.state = {
             genres: [],
-            movies: []
+            movies: [],
+            loading: true
         }
-        this.loading = true;
         this.page = 1;
         this.hasMore = true;
         this.genreId = this.props.match.params.id;
@@ -26,7 +26,7 @@ class GenreMovies extends React.Component {
     async componentDidMount() {
         let response = await apiConnect.getGenresList();
         if (response) {
-            this.loading = false;
+            this.setState({ loading: false });
             this.setState({ genres: response });
             if (this.genreId !== '0') {
                 this.getFilms();
@@ -40,30 +40,30 @@ class GenreMovies extends React.Component {
         if (prevProps) {
             this.genreId = this.props.match.params.id;
             if (prevProps.match.params.id !== this.genreId && this.genreId !== '0') {
-                this.loading = true;
+                this.setState({ loading: true });
                 this.getFilms();
             }
-        } 
+        }
     }
 
     async getFilms() {
         let response = await apiConnect.getGenreMovies(this.genreId);
         if (response) {
             this.hasMore = 1 < response.total_pages ? true : false;
-            this.loading = false;
+            this.setState({ loading: false });
             this.setState({ movies: response.data });
-            document.getElementById('movies').scrollIntoView({ behavior: 'smooth' });            
+            document.getElementById('movies').scrollIntoView({ behavior: 'smooth' });
         } else {
             this.setState({ movies: undefined });
         }
     }
 
     async nextPage() {
-        this.loading = true;
+        this.setState({ loading: true });
         let response = await apiConnect.getGenreMovies(this.genreId, ++this.page);
         if (response) {
             this.hasMore = this.page < response.total_pages ? true : false;
-            this.loading = false;
+            this.setState({ loading: false });
             this.setState({ movies: [...this.state.movies, ...response.data] });
         } else {
             this.setState({ movies: undefined });
@@ -71,9 +71,12 @@ class GenreMovies extends React.Component {
     }
 
     render() {
-        if (!this.loading) {
+        if (!this.state.genres !== undefined && this.state.movies !== undefined) {
             return (
                 <div className="movies-genre">
+                    {this.state.loading &&
+                        <Loading></Loading>
+                    }
                     <h1>Géneros películas</h1>
                     <div className="genres">
                         {this.state.genres.map((g, i) => {
@@ -92,7 +95,7 @@ class GenreMovies extends React.Component {
                             dataLength={this.state.movies.length}
                             next={this.nextPage}
                             hasMore={this.hasMore}
-                            loader={<h4>Cargando...</h4>}
+                            loader={this.state.loading && <Loading></Loading>}
                             endMessage={
                                 <p style={{ textAlign: 'center' }}><b>Ya no hay más películas</b></p>
                             }
@@ -104,8 +107,6 @@ class GenreMovies extends React.Component {
                     }
                 </div>
             )
-        } else if (this.loading) {
-            return <Loading></Loading>
         } else {
             return <NoResultsFound text1={'Parece que el'} text2={'servidor de TMDB'} text3={'está caído'}></NoResultsFound>
         }
