@@ -15,6 +15,7 @@ class DetailPerson extends React.Component{
         this.state = {
             person: [],
             movies: [],
+            loading: true,
             bigImg: false,
             windowSize: window.innerWidth
         }
@@ -38,7 +39,7 @@ class DetailPerson extends React.Component{
 
     componentDidUpdate(prevProps) {
         if (prevProps && prevProps.match.params.id !== this.props.match.params.id) {
-            this.loading = true;
+            this.setState({ loading: true });
             this.getPerson();
         }
     }
@@ -49,11 +50,11 @@ class DetailPerson extends React.Component{
 
     async getPerson() {
         this.personType = this.props.match.params.person;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         if (this.arrPerson.indexOf(this.personType) > -1) {
             let personId = this.props.match.params.id
             let responseP = await apiConnect.getDetailPerson(personId);
             if (responseP) {
-                this.loading = false;
                 this.setState({ person: responseP });
                 let responseM;
                 if (this.personType === 'director') {
@@ -62,8 +63,8 @@ class DetailPerson extends React.Component{
                     responseM = await apiConnect.getActMovies(personId);
                 }
                 this.hasMore = 1 < responseM.total_pages ? true : false;
+                this.setState({ loading: false });
                 this.setState({ movies: responseM.data });
-                window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
                 this.setState({ person: undefined });
             }
@@ -92,7 +93,7 @@ class DetailPerson extends React.Component{
     }
     
     async nextPage() {
-        this.loading = true;
+        this.setState({ loading: true });
         let response;
         if (this.personType === 'director') {
             response = await apiConnect.getDirectorMovies(this.props.match.params.id, ++this.page);
@@ -101,7 +102,7 @@ class DetailPerson extends React.Component{
         }
         if (response) {
             this.hasMore = this.page < response.total_pages ? true : false;
-            this.loading = true;
+            this.setState({ loading: false });
             this.setState({ movies: [...this.state.movies, ...response.data] });
         } else {
             this.setState({ movie: undefined });
@@ -109,71 +110,78 @@ class DetailPerson extends React.Component{
     }
 
     render() {
-        if (!this.loading) {
+        if (this.state.person !== undefined) {
             return (
                 <div>
-                    <div className="person">
+                    {this.state.loading &&
+                        <Loading></Loading>
+                    }
+                    {this.state.person &&
                         <div>
-                            <div className="name">
-                                <div className="col1">Nombre:</div>
-                                <h1 className="col2">{this.state.person.name}</h1>
-                            </div>
-                            <div>
-                                <div className="col1">Fecha nacimiento:</div>
-                                <div className="col2"><FormatDate date={this.state.person.birthday}></FormatDate></div>
-                            </div>
-                            <div>
-                                <div className="col1">Lugar nacimiento:</div>
-                                <div className="col2">{this.state.person.place_of_birth}</div>
-                            </div>
-                            {this.state.person.biography &&
+                            <div className="person">
                                 <div>
-                                    <div className="col1">Biografía:</div>
-                                    <div className="col2">{this.state.person.biography}</div>
+                                    <div className="name">
+                                        <div className="col1">Nombre:</div>
+                                        <h1 className="col2">{this.state.person.name}</h1>
+                                    </div>
+                                    <div>
+                                        <div className="col1">Fecha nacimiento:</div>
+                                        <div className="col2"><FormatDate date={this.state.person.birthday}></FormatDate></div>
+                                    </div>
+                                    <div>
+                                        <div className="col1">Lugar nacimiento:</div>
+                                        <div className="col2">{this.state.person.place_of_birth}</div>
+                                    </div>
+                                    {this.state.person.biography &&
+                                        <div>
+                                            <div className="col1">Biografía:</div>
+                                            <div className="col2">{this.state.person.biography}</div>
+                                        </div>
+                                    }
+                                    {this.state.person.homepage &&
+                                        <div>
+                                            <div className="col1">Página oficial:</div>
+                                            <a className="col2" href={this.state.person.homepage} target="_blank" rel="noopener noreferrer">aquí</a>
+                                        </div>
+                                    }
                                 </div>
-                            }
-                            {this.state.person.homepage &&
-                                <div>
-                                    <div className="col1">Página oficial:</div>
-                                    <a className="col2" href={this.state.person.homepage} target="_blank" rel="noopener noreferrer">aquí</a>
+                                <div className={`${this.state.bigImg ? 'hideSmallImg' : 'showSmallImg'}`}>
+                                    {this.state.person.profile_path &&
+                                        <div className="smallImgLoading">
+                                            <div className="smallImg" onClick={()=>this.resizeImg(true)} style={{ 'backgroundImage': 'url(' + this.pathImgSmall + this.state.person.profile_path + ')' }}>
+                                            </div>
+                                        </div>
+                                    }
                                 </div>
-                            }
-                        </div>
-                        <div className={`${this.state.bigImg ? 'hideSmallImg' : 'showSmallImg'}`}>
-                            {this.state.person.profile_path &&
-                                <div className="smallImg" onClick={()=>this.resizeImg(true)} style={{ 'backgroundImage': 'url(' + this.pathImgSmall + this.state.person.profile_path + ')' }}>
-                                </div>
-                            }
-                        </div>
-                    </div>
-                    <div id="bigImg">
-                        {this.cwithBig691 &&
-                            <div className={`bigImg ${this.state.bigImg ? 'show' : 'hide'}`} onClick={()=>this.resizeImg(false)}>
-                                <img src={`${this.pathImgBig}${this.state.person.profile_path}`} alt={this.state.person.name} />
                             </div>
-                        }
-                    </div>
-                    <div>
-                        <InfiniteScroll
-                            dataLength={this.state.movies.length} 
-                            next={this.nextPage}
-                            hasMore={this.hasMore}
-                            loader={<h4>Cargando...</h4>}
-                            endMessage={this.state.movies.length > 0 &&
-                                <p style={{textAlign: 'center'}}><b>Ya no hay más películas</b></p>
-                            }
-                        >
+                            <div id="bigImg">
+                                {this.cwithBig691 &&
+                                    <div className={`bigImg ${this.state.bigImg ? 'show' : 'hide'}`} onClick={()=>this.resizeImg(false)}>
+                                        <img src={`${this.pathImgBig}${this.state.person.profile_path}`} alt={this.state.person.name} />
+                                    </div>
+                                }
+                            </div>
                             <div>
-                                <DisplayMovies films={this.state.movies} />
+                                <InfiniteScroll
+                                    dataLength={this.state.movies.length} 
+                                    next={this.nextPage}
+                                    hasMore={this.hasMore}
+                                    loader={<h4>Cargando...</h4>}
+                                    endMessage={this.state.movies.length > 0 &&
+                                        <p style={{textAlign: 'center'}}><b>Ya no hay más películas</b></p>
+                                    }
+                                >
+                                    <div>
+                                        <DisplayMovies films={this.state.movies} />
+                                    </div>
+                                </InfiniteScroll>
                             </div>
-                        </InfiniteScroll>
-                    </div>
+                        </div>
+                    }
                 </div>
             )
-        } else if (this.state.person === undefined) {
-            return <NoResultsFound text1={'Parece que el'} text2={'servidor de TMDB'} text3={'está caído'}></NoResultsFound>
         } else {
-            return <Loading></Loading>
+            return <NoResultsFound text1={'Parece que el'} text2={'servidor de TMDB'} text3={'está caído'}></NoResultsFound>
         }
     }
 }
