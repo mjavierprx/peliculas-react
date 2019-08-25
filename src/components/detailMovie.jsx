@@ -1,7 +1,5 @@
 import React from 'react';
 
-import InfiniteScroll from 'react-infinite-scroll-component';
-
 import apiConnect from './services/apiConnect';
 import DisplayMovies from "./displayMovies";
 import StarsRate from "./subcomponents/starsRate";
@@ -253,21 +251,7 @@ class DetailMovie extends React.Component {
                                     </div>
                                 }
                             </div>
-                            <div>
-                                <InfiniteScroll
-                                    dataLength={this.state.similars.length}
-                                    next={this.nextPage}
-                                    hasMore={this.hasMore}
-                                    loader={this.state.loading && <Loading></Loading>}
-                                    endMessage={this.state.similars.length > 0 &&
-                                        <p style={{ textAlign: 'center' }}><b>Ya no hay más películas</b></p>
-                                    }
-                                >
-                                    <div>
-                                        <DisplayMovies films={this.state.similars} />
-                                    </div>
-                                </InfiniteScroll>
-                            </div>
+                            <DisplayMovies films={this.state.similars} infScrObj={{nextPage: this.nextPage, hasMore: this.hasMore, loader: this.state.loading}}/>
                         </div>
                     }
                 </div>

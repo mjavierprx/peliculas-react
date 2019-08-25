@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
 
-import InfiniteScroll from 'react-infinite-scroll-component';
-
 import apiConnect from "./services/apiConnect";
 import DisplayMovies from "./displayMovies";
 import NoResultsFound from "./subcomponents/noResultsFound";
-import Loading from "./subcomponents/loading";
 
 class SearchMovies extends Component {
     constructor(props) {
@@ -66,23 +63,7 @@ class SearchMovies extends Component {
 
     render() {
         if (this.state.movies !== undefined) {
-            return (
-                <div>
-                    <InfiniteScroll
-                        dataLength={this.state.movies.length}
-                        next={this.nextPage}
-                        hasMore={this.hasMore}
-                        loader={this.state.loading && <Loading></Loading>}
-                        endMessage={this.state.movies.length > 0 &&
-                            <p style={{ textAlign: 'center' }}><b>Ya no hay más películas</b></p>
-                        }
-                    >
-                        <div>
-                            <DisplayMovies films={this.state.movies} />
-                        </div>
-                    </InfiniteScroll>
-                </div>
-            )
+            return <DisplayMovies films={this.state.movies} infScrObj={{nextPage: this.nextPage, hasMore: this.hasMore, loader: this.state.loading}}/>
         } else {
             if (this.noResults) {
                 return <NoResultsFound text1={'No se han'} text2={'encontrado'} text3={'resultados'}></NoResultsFound>

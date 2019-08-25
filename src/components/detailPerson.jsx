@@ -1,7 +1,5 @@
 import React from 'react';
 
-import InfiniteScroll from 'react-infinite-scroll-component';
-
 import apiConnect from './services/apiConnect';
 import DisplayMovies from "./displayMovies";
 import FormatDate from "./subcomponents/formatDate";
@@ -161,21 +159,7 @@ class DetailPerson extends React.Component{
                                     </div>
                                 }
                             </div>
-                            <div>
-                                <InfiniteScroll
-                                    dataLength={this.state.movies.length} 
-                                    next={this.nextPage}
-                                    hasMore={this.hasMore}
-                                    loader={<h4>Cargando...</h4>}
-                                    endMessage={this.state.movies.length > 0 &&
-                                        <p style={{textAlign: 'center'}}><b>Ya no hay más películas</b></p>
-                                    }
-                                >
-                                    <div>
-                                        <DisplayMovies films={this.state.movies} />
-                                    </div>
-                                </InfiniteScroll>
-                            </div>
+                            <DisplayMovies films={this.state.movies} infScrObj={{nextPage: this.nextPage, hasMore: this.hasMore, loader: this.state.loading}}/>
                         </div>
                     }
                 </div>

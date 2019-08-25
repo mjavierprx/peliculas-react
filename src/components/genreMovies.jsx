@@ -1,8 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import InfiniteScroll from 'react-infinite-scroll-component';
-
 import apiConnect from './services/apiConnect';
 import DisplayMovies from "./displayMovies";
 import NoResultsFound from "./subcomponents/noResultsFound";
@@ -91,19 +89,7 @@ class GenreMovies extends React.Component {
                     </div>
                     <div id="movies"></div>
                     {this.state.movies.length > 0 &&
-                        <InfiniteScroll
-                            dataLength={this.state.movies.length}
-                            next={this.nextPage}
-                            hasMore={this.hasMore}
-                            loader={this.state.loading && <Loading></Loading>}
-                            endMessage={
-                                <p style={{ textAlign: 'center' }}><b>Ya no hay más películas</b></p>
-                            }
-                        >
-                            <div>
-                                <DisplayMovies films={this.state.movies} />
-                            </div>
-                        </InfiniteScroll>
+                        <DisplayMovies films={this.state.movies} infScrObj={{nextPage: this.nextPage, hasMore: this.hasMore, loader: this.state.loading}}/>
                     }
                 </div>
             )

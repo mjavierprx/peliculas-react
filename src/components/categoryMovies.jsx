@@ -1,11 +1,8 @@
 import React from 'react';
 
-import InfiniteScroll from 'react-infinite-scroll-component';
-
 import DisplayMovies from "./displayMovies";
 import apiConnect from './services/apiConnect';
 import NoResultsFound from "./subcomponents/noResultsFound";
-import Loading from "./subcomponents/loading";
 import './categoryMovies.scss';
 
 class CategoryMovies extends React.Component {
@@ -63,20 +60,8 @@ class CategoryMovies extends React.Component {
         if (this.state.movies !== undefined) {
             return (
                 <div className="movies-category">
-                    <InfiniteScroll
-                        dataLength={this.state.movies.length}
-                        next={this.nextPage}
-                        hasMore={this.hasMore}
-                        loader={this.state.loading && <Loading></Loading>}
-                        endMessage={
-                            <p style={{ textAlign: 'center' }}><b>Ya no hay más películas</b></p>
-                        }
-                    >
-                        <div>
-                            <h1>{this.title}</h1>
-                            <DisplayMovies films={this.state.movies} />
-                        </div>
-                    </InfiniteScroll>
+                    <h1>{this.title}</h1>
+                    <DisplayMovies films={this.state.movies} infScrObj={{nextPage: this.nextPage, hasMore: this.hasMore, loader: this.state.loading}}/>
                 </div>
             )
         } else {
