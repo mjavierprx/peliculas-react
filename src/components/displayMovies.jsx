@@ -24,7 +24,7 @@ function DisplayMovies(props) {
         return () => {
             window.removeEventListener('scroll', buttonUp);
         }
-    });
+    }, []);
 
     return (
         <InfiniteScroll

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 
 import './header.scss';
@@ -41,7 +41,7 @@ function Header() {
 			window.removeEventListener('resize', windowSizeChange);
 			window.removeEventListener('click', elementClicked);
         }
-    });
+    }, []);
 
     return (
         <header>

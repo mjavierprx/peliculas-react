@@ -29,7 +29,7 @@ function StarsRate(props) {
       }
       setStars(stars);
     }
-  }, [rate, stars, starMedium]);
+  }, []);
 
   return (
     <span>
