@@ -10,6 +10,7 @@ function Header() {
     }
     function keyPressed(event) {
         if (event.key === "Enter") {
+			event.preventDefault();
             search();
         }
     }
@@ -21,7 +22,6 @@ function Header() {
     function windowSizeChange() {
         setWindowSize(window.innerWidth);
     }
-    window.addEventListener('resize', windowSizeChange);
 
     const [getDropdownShow, setDropdownShow] = useState(false);
     function dropdownShow(event) {
@@ -31,9 +31,17 @@ function Header() {
     function elementClicked() {
         setDropdownShow(false);
     }
-    window.addEventListener('click', elementClicked);
 
     let cwithBig691 = getWindowSize > 691 ? true : false;
+
+    useEffect(() => {
+		window.addEventListener('resize', windowSizeChange);
+		window.addEventListener('click', elementClicked);
+        return () => {
+			window.removeEventListener('resize', windowSizeChange);
+			window.removeEventListener('click', elementClicked);
+        }
+    });
 
     return (
         <header>
