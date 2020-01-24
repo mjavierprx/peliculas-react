@@ -11,7 +11,6 @@ function DisplayMovies(props) {
     const pathImg = 'http://image.tmdb.org/t/p/w185';
     let [getbuttonUp, setButtonUp] = useState(false);
 
-    window.addEventListener("scroll", buttonUp);
     function buttonUp(e) {
         setButtonUp(window.scrollY > 100 ? true : false);
     }
@@ -21,6 +20,7 @@ function DisplayMovies(props) {
     }
     
     useEffect(() => {
+		window.addEventListener("scroll", buttonUp);
         return () => {
             window.removeEventListener('scroll', buttonUp);
         }
@@ -47,12 +47,12 @@ function DisplayMovies(props) {
                         </Link>
                     )
                 })}
-                {getbuttonUp &&
-                    <button className="btnFixed" onClick={scrollUp}>
-                        <img src="/img/up.png" alt="arriba" />
-                    </button>
-                }
             </section>
+			{getbuttonUp &&
+				<button className="btnFixed" onClick={scrollUp}>
+					<img src="/img/up.png" alt="arriba" />
+				</button>
+			}
         </InfiniteScroll>
     )
 }
